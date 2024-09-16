@@ -836,25 +836,11 @@ jobs:
     name: build rustdesk android apk ${{ matrix.job.target }}
     runs-on: 
       - self-hosted
-      - ${{ matrix.job.os }}
+      - linux
     strategy:
       fail-fast: false
       matrix:
         job:
-          - {
-              arch: aarch64,
-              target: aarch64-linux-android,
-              os: ubuntu-20.04,
-              reltype: release,
-              suffix: "",
-            }
-          - {
-              arch: armv7,
-              target: armv7-linux-androideabi,
-              os: ubuntu-20.04,
-              reltype: release,
-              suffix: "",
-            }
           - {
               arch: x86_64,
               target: x86_64-linux-android,
@@ -1297,7 +1283,7 @@ jobs:
     name: build rustdesk linux ${{ matrix.job.target }}
     runs-on: 
       - self-hosted
-      - ${{ matrix.job.on }}
+      - linux
     strategy:
       fail-fast: false
       matrix:
@@ -1310,14 +1296,6 @@ jobs:
               on: ubuntu-20.04,
               deb_arch: amd64,
               vcpkg-triplet: x64-linux,
-            }
-          - {
-              arch: aarch64,
-              target: aarch64-unknown-linux-gnu,
-              distro: ubuntu18.04,
-              on: [self-hosted, Linux, ARM64],
-              deb_arch: arm64,
-              vcpkg-triplet: arm64-linux,
             }
     steps:
       - name: Export GitHub Actions cache environment variables
@@ -1617,7 +1595,7 @@ jobs:
     needs: build-rustdesk-linux # not for dep, just make it run later for parallelism
     runs-on: 
       - self-hosted
-      - ${{ matrix.job.on }}
+      - linux
     name: build-rustdesk-linux-sciter ${{ matrix.job.target }}
     strategy:
       fail-fast: false
@@ -1633,16 +1611,6 @@ jobs:
               sciter_arch: x64,
               vcpkg-triplet: x64-linux,
               extra_features: ",hwcodec",
-            }
-          - {
-              arch: armv7,
-              target: armv7-unknown-linux-gnueabihf,
-              on: [self-hosted, Linux, ARM64],
-              distro: ubuntu18.04-rustdesk,
-              deb_arch: armhf,
-              sciter_arch: arm32,
-              vcpkg-triplet: arm-linux,
-              extra_features: "",
             }
     steps:
       - name: Export GitHub Actions cache environment variables
@@ -1885,7 +1853,7 @@ jobs:
       - build-rustdesk-linux-sciter
     runs-on: 
       - self-hosted
-      - ${{ matrix.job.on }}
+      - linux
     if: ${{ inputs.upload-artifact }}
     strategy:
       fail-fast: false
@@ -1904,14 +1872,6 @@ jobs:
               on: ubuntu-20.04,
               arch: x86_64,
               suffix: "-sciter",
-            }
-          - {
-              target: aarch64-unknown-linux-gnu,
-              # try out newer flatpak since error of "error: Nothing matches org.freedesktop.Platform in remote flathub"
-              distro: ubuntu22.04,
-              on: [self-hosted, Linux, ARM64],
-              arch: aarch64,
-              suffix: "",
             }
     steps:
       - name: Checkout source code
