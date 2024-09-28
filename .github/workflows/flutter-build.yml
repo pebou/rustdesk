@@ -932,7 +932,7 @@ jobs:
       - name: Setup vcpkg with Github Actions binary cache
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgDirectory: /opt/artifacts/vcpkg
+          vcpkgDirectory: ${{ github.workspace }}/artifacts/vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
           doNotCache: false
 
@@ -1379,7 +1379,7 @@ jobs:
         if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgDirectory: /opt/artifacts/vcpkg
+          vcpkgDirectory: ${{ github.workspace }}/artifacts/vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
           doNotCache: false
 
@@ -1418,10 +1418,10 @@ jobs:
           githubToken: ${{ github.token }}
           setup: |
             ls -l "${PWD}"
-            ls -l /opt/artifacts/vcpkg/installed
+            ls -l ${{ github.workspace }}/artifacts/vcpkg/installed
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
-            --volume "/opt/artifacts:/opt/artifacts"
+            --volume "${{ github.workspace }}/artifacts:${{ github.workspace }}/artifacts"
           shell: /bin/bash
           install: |
             apt-get update -y
@@ -1463,7 +1463,7 @@ jobs:
             apt-get remove -y libopus-dev || true
             # output devs
             ls -l ./
-            tree -L 3 /opt/artifacts/vcpkg/installed
+            tree -L 3 ${{ github.workspace }}/artifacts/vcpkg/installed
           run: |
             # disable git safe.directory
             git config --global --add safe.directory "*"
@@ -1483,7 +1483,7 @@ jobs:
             cat ~/.cargo/config
             # start build
             pushd /workspace
-            export VCPKG_ROOT=/opt/artifacts/vcpkg
+            export VCPKG_ROOT=${{ github.workspace }}/artifacts/vcpkg
             if [[ "${{ matrix.job.arch }}" == "aarch64" ]]; then
               export JOBS="--jobs 3"
             else
@@ -1735,9 +1735,9 @@ jobs:
               export PATH="/opt/cmake-${{ env.SCITER_ARMV7_CMAKE_VERSION }}-linux-armhf/bin:$PATH"
             fi
             # bootstrap vcpkg and set VCPKG_ROOT
-            export VCPKG_ROOT=/opt/artifacts/vcpkg
-            mkdir -p /opt/artifacts
-            pushd /opt/artifacts
+            export VCPKG_ROOT=${{ github.workspace }}/artifacts/vcpkg
+            mkdir -p ${{ github.workspace }}/artifacts
+            pushd ${{ github.workspace }}/artifacts
             rm -rf vcpkg
             git clone https://github.com/microsoft/vcpkg
             pushd vcpkg
@@ -1782,7 +1782,7 @@ jobs:
             """ > ~/.cargo/config
             cat ~/.cargo/config
             # install dependencies from vcpkg
-            export VCPKG_ROOT=/opt/artifacts/vcpkg
+            export VCPKG_ROOT=${{ github.workspace }}/artifacts/vcpkg
             if ! $VCPKG_ROOT/vcpkg install --triplet ${{ matrix.job.vcpkg-triplet }} --x-install-root="$VCPKG_ROOT/installed"; then
               find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
                 echo "$_1:"
