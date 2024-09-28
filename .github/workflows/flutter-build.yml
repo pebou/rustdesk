@@ -932,7 +932,7 @@ jobs:
       - name: Setup vcpkg with Github Actions binary cache
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgDirectory: ~/artifacts/vcpkg
+          vcpkgDirectory: /home/peb/artifacts/vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
           doNotCache: false
 
@@ -1379,7 +1379,7 @@ jobs:
         if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgDirectory: ~/artifacts/vcpkg
+          vcpkgDirectory: /home/peb/artifacts/vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
           doNotCache: false
 
@@ -1418,10 +1418,10 @@ jobs:
           githubToken: ${{ github.token }}
           setup: |
             ls -l "${PWD}"
-            ls -l ~/artifacts/vcpkg/installed
+            ls -l /home/peb/artifacts/vcpkg/installed
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
-            --volume "~/artifacts:~/artifacts"
+            --volume "/home/peb/artifacts:/opt/artifacts"
           shell: /bin/bash
           install: |
             apt-get update -y
@@ -1463,7 +1463,7 @@ jobs:
             apt-get remove -y libopus-dev || true
             # output devs
             ls -l ./
-            tree -L 3 ~/artifacts/vcpkg/installed
+            tree -L 3 /opt/artifacts/vcpkg/installed
           run: |
             # disable git safe.directory
             git config --global --add safe.directory "*"
@@ -1483,7 +1483,7 @@ jobs:
             cat ~/.cargo/config
             # start build
             pushd /workspace
-            export VCPKG_ROOT=~/artifacts/vcpkg
+            export VCPKG_ROOT=/opt/artifacts/vcpkg
             if [[ "${{ matrix.job.arch }}" == "aarch64" ]]; then
               export JOBS="--jobs 3"
             else
